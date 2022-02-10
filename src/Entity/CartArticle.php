@@ -15,8 +15,23 @@ class CartArticle
     #[ORM\Column(type: 'integer')]
     private $id;
 
+    #[ORM\ManyToOne(targetEntity: Article::class, inversedBy: 'cartArticle')]
+    private $article;
+
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getArticle(): ?Article
+    {
+        return $this->article;
+    }
+
+    public function setArticle(?Article $article): self
+    {
+        $this->article = $article;
+
+        return $this;
     }
 }
