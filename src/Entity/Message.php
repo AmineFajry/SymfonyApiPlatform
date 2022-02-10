@@ -27,6 +27,9 @@ class Message
     #[ORM\Column(type: 'boolean')]
     private $status;
 
+    #[ORM\ManyToOne(targetEntity: Store::class, inversedBy: 'messages')]
+    private $store;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -76,6 +79,18 @@ class Message
     public function setStatus(bool $status): self
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    public function getStore(): ?Store
+    {
+        return $this->store;
+    }
+
+    public function setStore(?Store $store): self
+    {
+        $this->store = $store;
 
         return $this;
     }

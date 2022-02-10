@@ -20,9 +20,34 @@ class Store
     #[ORM\OneToMany(mappedBy: 'store', targetEntity: Article::class)]
     private $articles;
 
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'store')]
+    private $user;
+
+    #[ORM\Column(type: 'string', length: 255)]
+    private $title;
+
+    #[ORM\Column(type: 'string', length: 255)]
+    private $zipcode;
+
+    #[ORM\Column(type: 'string', length: 255)]
+    private $adress;
+
+    #[ORM\Column(type: 'text')]
+    private $description;
+
+    #[ORM\Column(type: 'string', length: 255)]
+    private $imageUrl;
+
+    #[ORM\Column(type: 'string', length: 255)]
+    private $city;
+
+    #[ORM\OneToMany(mappedBy: 'store', targetEntity: Message::class)]
+    private $messages;
+
     public function __construct()
     {
         $this->articles = new ArrayCollection();
+        $this->messages = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -54,6 +79,120 @@ class Store
             // set the owning side to null (unless already changed)
             if ($article->getStore() === $this) {
                 $article->setStore(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
+
+    public function setTitle(string $title): self
+    {
+        $this->title = $title;
+
+        return $this;
+    }
+
+    public function getZipcode(): ?string
+    {
+        return $this->zipcode;
+    }
+
+    public function setZipcode(string $zipcode): self
+    {
+        $this->zipcode = $zipcode;
+
+        return $this;
+    }
+
+    public function getAdress(): ?string
+    {
+        return $this->adress;
+    }
+
+    public function setAdress(string $adress): self
+    {
+        $this->adress = $adress;
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(string $description): self
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    public function getImageUrl(): ?string
+    {
+        return $this->imageUrl;
+    }
+
+    public function setImageUrl(string $imageUrl): self
+    {
+        $this->imageUrl = $imageUrl;
+
+        return $this;
+    }
+
+    public function getCity(): ?string
+    {
+        return $this->city;
+    }
+
+    public function setCity(string $city): self
+    {
+        $this->city = $city;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Message[]
+     */
+    public function getMessages(): Collection
+    {
+        return $this->messages;
+    }
+
+    public function addMessage(Message $message): self
+    {
+        if (!$this->messages->contains($message)) {
+            $this->messages[] = $message;
+            $message->setStore($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMessage(Message $message): self
+    {
+        if ($this->messages->removeElement($message)) {
+            // set the owning side to null (unless already changed)
+            if ($message->getStore() === $this) {
+                $message->setStore(null);
             }
         }
 
