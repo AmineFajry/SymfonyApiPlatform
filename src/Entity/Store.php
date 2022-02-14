@@ -2,7 +2,9 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\StoreRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -10,6 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: StoreRepository::class)]
 #[ApiResource]
+#[ApiFilter(SearchFilter::class, properties: ['zipcode'])]
 class Store
 {
     #[ORM\Id]
@@ -44,10 +47,14 @@ class Store
     #[ORM\OneToMany(mappedBy: 'store', targetEntity: Message::class)]
     private $messages;
 
+    #[ORM\OneToMany(mappedBy: 'store', targetEntity: Order::class)]
+    private $order_;
+
     public function __construct()
     {
         $this->articles = new ArrayCollection();
         $this->messages = new ArrayCollection();
+        $this->order_ = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -193,6 +200,36 @@ class Store
             // set the owning side to null (unless already changed)
             if ($message->getStore() === $this) {
                 $message->setStore(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Order[]
+     */
+    public function getOrder(): Collection
+    {
+        return $this->order_;
+    }
+
+    public function addOrder(Order $order): self
+    {
+        if (!$this->order_->contains($order)) {
+            $this->order_[] = $order;
+            $order->setStore($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrder(Order $order): self
+    {
+        if ($this->order_->removeElement($order)) {
+            // set the owning side to null (unless already changed)
+            if ($order->getStore() === $this) {
+                $order->setStore(null);
             }
         }
 
